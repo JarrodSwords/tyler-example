@@ -6,9 +6,9 @@ public class Order
 
     #region Creation
 
-    public Order()
+    public Order(IEnumerable<LineItem> lineItems)
     {
-        _lineItems.Add(new());
+        _lineItems.AddRange(lineItems);
     }
 
     #endregion
@@ -18,8 +18,4 @@ public class Order
     public IReadOnlyList<LineItem> LineItems => _lineItems.AsReadOnly();
 
     #endregion
-}
-
-public class LineItem
-{
 }
