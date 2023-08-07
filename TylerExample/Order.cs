@@ -8,7 +8,7 @@ public class Order
 
     public Order(IEnumerable<LineItem> lineItems)
     {
-        _lineItems.AddRange(lineItems);
+        _lineItems.AddRange(lineItems.OrderByDescending(x => x.Quantity));
     }
 
     #endregion
