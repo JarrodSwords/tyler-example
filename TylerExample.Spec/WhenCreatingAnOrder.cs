@@ -19,8 +19,8 @@ public class WhenCreatingAnOrder
 
     public static IEnumerable<object[]> GetOutOfOrderLineItems()
     {
-        yield return new object[] { new List<LineItem> { new("XYZ123", 1), new("ABC123", 2) } };
-        yield return new object[] { new List<LineItem> { new("XYZ123", 1), new("ABC123", 5), new("MNO345", 3) } };
+        yield return new object[] { new LineItem("XYZ123", 1), new LineItem("ABC123", 2) };
+        yield return new object[] { new LineItem("XYZ123", 1), new LineItem("ABC123", 5), new LineItem("MNO345", 3) };
     }
 
     #endregion
@@ -30,14 +30,14 @@ public class WhenCreatingAnOrder
     [Fact]
     public void ThenLineItemsAreExpected()
     {
-        var order = new Order(new List<LineItem> { _lineItem });
+        var order = new Order(_lineItem);
 
         order.LineItems.Should().BeEquivalentTo(new List<LineItem> { new("ABC123", 1) });
     }
 
     [Theory]
     [MemberData(nameof(GetOutOfOrderLineItems))]
-    public void ThenLineItemsAreSortedInDescendingOrderByQuantity(IEnumerable<LineItem> lineItems)
+    public void ThenLineItemsAreSortedInDescendingOrderByQuantity(params LineItem[] lineItems)
     {
         var order = new Order(lineItems);
 
@@ -47,9 +47,31 @@ public class WhenCreatingAnOrder
     [Fact]
     public void ThenOrderHasAtLeastOneLineItem()
     {
-        var order = new Order(new List<LineItem> { _lineItem });
+        var order = new Order(_lineItem);
 
         order.LineItems.Should().HaveCountGreaterThan(0);
+    }
+
+    #endregion
+}
+
+public class WhenAddingALineItem
+{
+    #region Requirements
+
+    [Fact]
+    public void ThenOrderIsPreserved()
+    {
+        var order = new Order(
+            new LineItem("ABC123", 1),
+            new LineItem("ABC123", 2),
+            new LineItem("ABC123", 4),
+            new LineItem("ABC123", 5)
+        );
+
+        order.Add(new("ABC123", 3));
+
+        order.LineItems.Should().BeInDescendingOrder(x => x.Quantity);
     }
 
     #endregion
